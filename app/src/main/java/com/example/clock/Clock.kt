@@ -26,12 +26,15 @@ import java.util.Locale
 import android.content.Context
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -43,15 +46,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import java.util.Calendar
 import androidx.compose.material3.TimePicker
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Clear
 
 @Composable
 fun Alar(alarmManager: Alarm){
     var tipicker by remember { mutableStateOf(false) }
-    val Lalarms by remember { mutableStateOf(alarmManager.getAlarms()) }
+    var lalarms by remember { mutableStateOf(alarmManager.getAlarms().toMutableList()) }
     Box() {
-//        var alarmlist by remember { mutableListOf() }
         val context = LocalContext.current
-        val alarmManager = Alarm(context)
         Column(
             Modifier
                 .fillMaxSize()
@@ -92,6 +95,29 @@ fun Alar(alarmManager: Alarm){
                     }
                 }
             )
+            Text("Alarms", fontSize = 24.sp)
+
+            LazyColumn {
+                items(lalarms) { alarm ->
+                    Row(
+                        Modifier.fillMaxWidth().padding(10.dp).background(Color.White.copy(alpha = 0.3f),
+                            RoundedCornerShape(10.dp)
+                        ),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "${alarm.hour}:${alarm.minute}", fontSize = 18.sp)
+                        Button(onClick = {alarmManager.cancelAlarm(alarm.requestCode)
+                            lalarms = alarmManager.getAlarms().toMutableList()
+                        }, colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black.copy(alpha = 0.3f),
+                            contentColor = Color.White
+                        ), shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Icon(Icons.Default.Clear, contentDescription = "Add")
+                        }
+                    }
+                }
+            }
 //        isko hi implement karna hai bs sahi se
 //        Button(onClick = {
 //            alarmManager.scheduleAlarm()
@@ -112,6 +138,7 @@ fun Alar(alarmManager: Alarm){
                 DialExample(context,onConfirm = { hour, minute ->
                     val randomRequestCode = (System.currentTimeMillis() % Int.MAX_VALUE).toInt()
                     alarmManager.scheduleAlarm(hour,minute,randomRequestCode)
+                    lalarms = alarmManager.getAlarms().toMutableList()
                 }, onDismiss = {
                     tipicker = false
                 })

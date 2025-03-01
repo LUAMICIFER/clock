@@ -74,4 +74,5 @@ dependencies {
 //    implementation ("com.google.accompanist:accompanist-pager:0.24.13-rc")
     implementation("androidx.compose.material3:material3:1.2.0")//time picker ke liye alarm wala
     implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
